@@ -24,21 +24,20 @@ class BinarySearchTree
     end
   end
 
-  def included_in_tree?(data, current_node)
-    if current_node.data == data
-      true
+  def to_array(elements=[], current_node=root_node)
+    if empty?
+      elements
     else
-      check_branches(data, current_node)
+      load_tree((elements << current_node.data), current_node)
     end
+    elements
   end
 
-  def check_branches(data, current_node)
-    if left_of_current_node?(data, current_node) && current_node.left?
-      included_in_tree?(data, current_node.left)
-    elsif right_of_current_node?(data, current_node) && current_node.right?
-      included_in_tree?(data, current_node.right)
-    else
-      false
+  def load_tree(elements, current_node)
+    if current_node.left?
+      to_array(elements, current_node.left)
+    elsif current_node.right?
+      to_array(elements, current_node.right)
     end
   end
 
@@ -84,6 +83,24 @@ class BinarySearchTree
     else
       @count += 1
       current_node.right = Node.new(data)
+    end
+  end
+
+  def included_in_tree?(data, current_node)
+    if current_node.data == data
+      true
+    else
+      check_branches(data, current_node)
+    end
+  end
+
+  def check_branches(data, current_node)
+    if left_of_current_node?(data, current_node) && current_node.left?
+      included_in_tree?(data, current_node.left)
+    elsif right_of_current_node?(data, current_node) && current_node.right?
+      included_in_tree?(data, current_node.right)
+    else
+      false
     end
   end
 end
