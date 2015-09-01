@@ -37,7 +37,6 @@ describe BinarySearchTree do
     end
 
     it "adds a new root node when pushed" do
-      skip
       @tree.push(1)
       assert_equal 1, @tree.root_node.data
     end
@@ -91,18 +90,15 @@ describe BinarySearchTree do
   describe "#count" do
     # count tells us the number of nodes in the tree
     it "is 0 for an empty tree" do
-      skip
       assert_equal 0, @tree.count
     end
 
     it "is 1 for a tree with a root node" do
-      skip
       @tree.push(5)
       assert_equal 1, @tree.count
     end
 
     it "continues to count elements as they are added" do
-      skip
       @tree.push(6)
       @tree.push(4)
       @tree.push(3)
@@ -114,18 +110,15 @@ describe BinarySearchTree do
   describe "#include?" do
     # include? tells us whether a piece of data exists in the tree
     it "is false for an empty tree" do
-      skip
       assert_equal false, @tree.include?(5)
     end
 
     it "is true for the data of the root node" do
-      skip
       @tree.push(4)
       assert_equal true, @tree.include?(4)
     end
 
     it "finds data lower in the tree" do
-      skip
       @tree.push(4)
       @tree.push(6)
       @tree.push(3356)
@@ -139,7 +132,6 @@ describe BinarySearchTree do
 
   describe "#to_array" do
     it "is empty for empty tree" do
-      skip
       assert_equal [], @tree.to_array
     end
 
