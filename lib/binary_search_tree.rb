@@ -1,8 +1,9 @@
 require 'pry'
 
+
 class BinarySearchTree
-  attr_reader :root_node,
-              :count
+  attr_accessor :root_node
+  attr_reader :count
 
   def initialize
     @count = 0
@@ -24,21 +25,104 @@ class BinarySearchTree
     end
   end
 
-  def to_array(elements=[], current_node=root_node)
-    if empty?
-      elements
+  def to_array(current_node=root_node)
+    if current_node.nil?
+      []
     else
-      load_tree((elements << current_node.data), current_node)
+      [current_node.data] + to_array(current_node.left) + to_array(current_node.right)
     end
-    elements
   end
 
-  def load_tree(elements, current_node)
-    if current_node.left?
-      to_array(elements, current_node.left)
-    elsif current_node.right?
-      to_array(elements, current_node.right)
+  def sort(current_node=root_node)
+    if current_node.nil?
+      []
+    else
+      sort(current_node.left) + [current_node.data] + sort(current_node.right)
     end
+  end
+
+  def min(current_node=root_node, minimum=nil)
+    if current_node.nil?
+      minimum
+    else
+      min(current_node.left, current_node.data)
+    end
+  end
+
+  def max(current_node=root_node, maximum=nil)
+    if current_node.nil?
+      maximum
+    else
+      max(current_node.right, current_node.data)
+    end
+  end
+
+  def post_ordered(current_node=root_node)
+    if current_node.nil?
+      []
+    else
+      post_ordered(current_node.left) + post_ordered(current_node.right) + [current_node.data]
+    end
+  end
+
+  def min_height(current_node=root_node, min_height=0)
+    if current_node.nil?
+      min_height
+    else
+      [1 + min_height(current_node.left), 1 + min_height(current_node.right)].min
+    end
+  end
+
+  def max_height(current_node=root_node, max_height=0)
+    if current_node.nil?
+      max_height
+    else
+      [1 + max_height(current_node.left), 1 + max_height(current_node.right)].max
+    end
+  end
+
+  def balanced?(current_node=root_node, balanced=false)
+    if max_height - min_height <= 1
+      balanced = true
+    else
+      balanced
+    end
+  end
+
+  def balance!
+    until balanced?
+      if left_heavy?
+        rotate_right!
+      else
+        rotate_left!
+      end
+    end
+  end
+
+  def left_heavy?(current_node=root_node)
+    if current_node.left.nil?
+      false
+    elsif current_node.right.nil?
+      true
+    else
+      (current_node.left.max_height - current_node.right.max_height) > 1
+    end
+  end
+
+  def rotate_right!
+    new_right = @root_node.right.left
+    new_root = @root_node.right
+    new_root.left = @root_node
+    @root_node.right = new_right
+    @root_node = new_root
+  end
+
+  def rotate_left!
+    new_left = @root_node.left.right
+    new_root = @root_node.left
+    new_root.right = @root_node
+    @root_node.left = new_left
+    @root_node = new_root
   end
 
   private
@@ -57,7 +141,8 @@ class BinarySearchTree
 
   def insert_on_root(data)
     @count += 1
-    @root_node = Node.new(data, nil, nil, true)
+    @root_node = Node.new( data: data,
+                           root: true )
   end
 
   def insert_in_tree(data, current_node)
@@ -73,7 +158,8 @@ class BinarySearchTree
       push(data, current_node.left)
     else
       @count += 1
-      current_node.left = Node.new(data)
+      current_node.left = Node.new(data: data,
+                                   parent: current_node)
     end
   end
 
@@ -82,7 +168,8 @@ class BinarySearchTree
       push(data, current_node.right)
     else
       @count += 1
-      current_node.right = Node.new(data)
+      current_node.right = Node.new(data: data,
+                                    parent: current_node)
     end
   end
 
@@ -109,13 +196,15 @@ class Node
   attr_accessor :data,
                 :left,
                 :right,
-                :root
+                :root,
+                :parent
 
-  def initialize(data, left=nil, right=nil, root=false)
-    @data  = data
-    @left  = left
-    @right = right
-    @root = root
+  def initialize(params)
+    @data   = params[:data]
+    @left   = params[:left]
+    @right  = params[:right]
+    @root   = params[:root]
+    @parent = params[:parent]
   end
 
   def left?
